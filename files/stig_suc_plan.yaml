@@ -1,0 +1,25 @@
+apiVersion: upgrade.cattle.io/v1
+kind: Plan
+metadata:
+  name: stig-filesystem-remediation
+  namespace: cattle-system
+spec:
+  concurrency: 2
+  nodeSelector:
+    matchExpressions:
+      - {key: node.kubernetes.io/instance-type, operator: Exists, value: rke2}
+      - {key: kubernetes.io/os, operator: Exists, value: linux}
+  tolerations:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/control-plane
+  - effect: NoExecute
+    key: node-role.kubernetes.io/etcd
+  serviceAccountName: system-agent-upgrader
+  secrets:
+    - name: stig-filesystem-remediation
+      path: /host/run/system-upgrade/secrets/stig-filesystem-remediation
+  version: stig-filesystem-remediation
+  upgrade:
+    image: busybox:stable
+    command: ["chroot", "/host"]
+    args: ["sh", "/run/system-upgrade/secrets/stig-filesystem-remediation/stig_fs_remediation.sh"]
