@@ -1,3 +1,5 @@
+- [] Commit a quick Intro paragraph
+
 > :warning: ***WARNING:*** Pod Security Policy (PSP) was deprecated in K8s v1.21 and is fully removed as of K8s v1.25.  RKE2 STIG does not (yet) provide guidance on the PSP replacement - Pod Security Admission (PSA).  A boiler-plate PSP template aligned with RKE2 STIG is still provided as part of this Terraform plan, despite upcoming PSP removal. To help prepare for this change, Pod Security Admission documentation is [HERE](https://kubernetes.io/docs/concepts/security/pod-security-admission/) and PSP to PSA migration process documentation is [HERE](https://kubernetes.io/docs/tasks/configure-pod-container/migrate-from-psp/).
 
 ## STIG Viewer
