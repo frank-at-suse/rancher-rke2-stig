@@ -55,7 +55,6 @@ resource "rancher2_cluster_v2" "rke2" {
         "audit-log-mode=blocking-strict", # STIG Rule ID: SV-254555r870265_rule
         "audit-policy-file=/etc/rancher/rke2/audit-policy.yaml", # STIG Rule ID: SV-254555r870265_rule
         "enable-admission-plugins=AlwaysPullImages,NodeRestriction",
-        "insecure-port=0", # STIG Rule ID: SV-254558r870252_rule
         "tls-cipher-suites=${file("${path.cwd}/files/stig_tls_ciphers")}", # STIG Rule ID: SV-254553r870263_rule
         "tls-min-version=VersionTLS13" ] # STIG Rule ID: SV-254553r870263_rule
 
@@ -64,7 +63,7 @@ resource "rancher2_cluster_v2" "rke2" {
         "terminated-pod-gc-threshold=10",
         "tls-cipher-suites=${file("${path.cwd}/files/stig_tls_ciphers")}", # STIG Rule ID: SV-254553r870263_rule
         "tls-min-version=VersionTLS13", # STIG Rule ID: SV-254553r870263_rule
-        "use-service-account-credentials=true" # STIG Rule ID: SV-254554r859232_rule ]
+        "use-service-account-credentials=true" ] # STIG Rule ID: SV-254554r859232_rule
 
       kube-scheduler-arg: [
         "tls-cipher-suites=${file("${path.cwd}/files/stig_tls_ciphers")}", # STIG Rule ID: SV-254553r870263_rule
@@ -78,7 +77,7 @@ resource "rancher2_cluster_v2" "rke2" {
         "make-iptables-util-chains=true",
         "read-only-port=0", # STIG RULE ID: SV-254559r870254_rule
         "streaming-connection-idle-timeout=5m", # STIG Rule ID: SV-254568r870258_rule
-        "tls-min-version=VersionTLS13" # STIG Rule ID: SV-254553r870263_rule ]
+        "tls-min-version=VersionTLS13" ] # STIG Rule ID: SV-254553r870263_rule
 
       write-kubeconfig-mode: "640"
     EOF
