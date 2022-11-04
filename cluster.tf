@@ -7,7 +7,7 @@ resource "rancher2_machine_config_v2" "nodes" {
   generate_name = replace(each.value.name, "_", "-")
 
   vsphere_config {
-    cfgparam   = ["disk.enableUUID=TRUE"] # Disk UUID is Required for vSphere Storage Provider
+    cfgparam   = ["disk.enableUUID=TRUE"]
     clone_from = var.vsphere_env.cloud_image_name
 
     cloud_config = templatefile("${path.cwd}/files/user_data_${each.key}.tftmpl",
@@ -35,7 +35,7 @@ resource "rancher2_cluster_v2" "rke2" {
   name               = random_pet.cluster_name.id
 
   rke_config {
-    additional_manifest = file("${path.cwd}/files/stig_suc_plan.yaml") # STIG Rule ID: SV-254564r859262_rule  (This is a manifest for a System Upgrade PLan that will remediate RKE2 file & directory permissions)
+    additional_manifest = file("${path.cwd}/files/stig_suc_plan.yaml") # STIG Rule ID: SV-254564r859262_rule  (This is a manifest for a System Upgrade Plan that will remediate RKE2 file & directory permissions)
 
     chart_values = <<EOF
       rke2-calico:
@@ -50,36 +50,36 @@ resource "rancher2_cluster_v2" "rke2" {
         "experimental-initial-corrupt-check=true" ] # Can be removed with etcd v3.6, which will enable corruption check by default (see: https://github.com/etcd-io/etcd/issues/13766)
 
       kube-apiserver-arg: [ 
-        "anonymous-auth=false", # STIG Rule ID: SV-254562r859256_rule
-        "audit-log-maxage=30", # STIG RULE ID: SV-254563r859259_rule
-        "audit-log-mode=blocking-strict", # STIG Rule ID: SV-254555r870265_rule
-        "audit-policy-file=/etc/rancher/rke2/audit-policy.yaml", # STIG Rule ID: SV-254555r870265_rule
+        "anonymous-auth=false",
+        "audit-log-maxage=30",
+        "audit-log-mode=blocking-strict",
+        "audit-policy-file=/etc/rancher/rke2/audit-policy.yaml",
         "enable-admission-plugins=AlwaysPullImages,NodeRestriction",
-        "tls-cipher-suites=${file("${path.cwd}/files/stig_tls_ciphers")}", # STIG Rule ID: SV-254553r870263_rule
-        "tls-min-version=VersionTLS13" ] # STIG Rule ID: SV-254553r870263_rule
+        "tls-cipher-suites=${file("${path.cwd}/files/stig_tls_ciphers.list")}",
+        "tls-min-version=VersionTLS13" ]
 
       kube-controller-manager-arg: [
-        "bind-address=127.0.0.1", # STIG Rule ID: SV-254556r859238_rule
+        "bind-address=127.0.0.1",
         "terminated-pod-gc-threshold=10",
-        "tls-cipher-suites=${file("${path.cwd}/files/stig_tls_ciphers")}", # STIG Rule ID: SV-254553r870263_rule
-        "tls-min-version=VersionTLS13", # STIG Rule ID: SV-254553r870263_rule
-        "use-service-account-credentials=true" ] # STIG Rule ID: SV-254554r859232_rule
+        "tls-cipher-suites=${file("${path.cwd}/files/stig_tls_ciphers.list")}",
+        "tls-min-version=VersionTLS13",
+        "use-service-account-credentials=true" ]
 
       kube-scheduler-arg: [
-        "tls-cipher-suites=${file("${path.cwd}/files/stig_tls_ciphers")}", # STIG Rule ID: SV-254553r870263_rule
+        "tls-cipher-suites=${file("${path.cwd}/files/stig_tls_ciphers.list")}",
         "tls-min-version=VersionTLS13" ]
 
       kubelet-arg: [
-        "anonymous-auth=false", # STIG Rule ID: SV-254557r859241_rule
+        "anonymous-auth=false",
         "cgroup-driver=systemd",
-        "authorization-mode=Webhook", # STIG RUle ID: SV-254561r870256_rule 
+        "authorization-mode=Webhook",
         "event-qps=0",
         "make-iptables-util-chains=true",
-        "read-only-port=0", # STIG RULE ID: SV-254559r870254_rule
-        "streaming-connection-idle-timeout=5m", # STIG Rule ID: SV-254568r870258_rule
-        "tls-min-version=VersionTLS13" ] # STIG Rule ID: SV-254553r870263_rule
+        "read-only-port=0",
+        "streaming-connection-idle-timeout=5m",
+        "tls-min-version=VersionTLS13" ]
 
-      write-kubeconfig-mode: "640"
+      write-kubeconfig-mode: "640" # STIG Rule ID: SV-254564r859262_rule
     EOF
 
     dynamic "machine_pools" {
@@ -101,7 +101,7 @@ resource "rancher2_cluster_v2" "rke2" {
 
     machine_selector_config {
       config = {
-        profile                 = "cis-1.6" # STIG Rule ID: SV-254555r870265_rulea
+        profile                 = "cis-1.6" # STIG Rule ID: SV-254555r870265_rule
         protect-kernel-defaults = true      # STIG Rule ID: SV-254569r859277_rule (Required to install RKE2 with CIS Profile enabled)
       }
     } # End machine_selector_config
