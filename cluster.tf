@@ -44,7 +44,7 @@ resource "rancher2_cluster_v2" "rke2" {
     EOF
 
     machine_global_config = <<EOF
-      cni: calico
+      cni: canal
 
       etcd-arg: [ 
         "experimental-initial-corrupt-check=true" ] # Can be removed with etcd v3.6, which will enable corruption check by default (see: https://github.com/etcd-io/etcd/issues/13766)
