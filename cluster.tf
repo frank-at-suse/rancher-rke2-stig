@@ -38,9 +38,9 @@ resource "rancher2_cluster_v2" "rke2" {
     additional_manifest = file("${path.cwd}/files/stig_suc_plan.yaml") # STIG Rule ID: SV-254564r859262_rule  (This is a manifest for a System Upgrade Plan that will remediate RKE2 file & directory permissions)
 
     chart_values = <<EOF
-      rke2-calico:
-        felixConfiguration:
-          wireguardEnabled: true
+      rke2-canal:
+        flannel:
+          backend: "wireguard"
     EOF
 
     machine_global_config = <<EOF
