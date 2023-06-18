@@ -4,16 +4,16 @@
 
 ## STIG Viewer
 
-The ins & outs of using STIG viewer aren't covered, but it can be downloaded [HERE](https://public.cyber.mil/stigs/srg-stig-tools/) and the RKE2 STIG that this Terraform plan references can be downloaded [HERE](https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_RGS_RKE2_V1R1_STIG.zip).
+The ins & outs of using STIG viewer aren't covered, but it can be downloaded [HERE](https://public.cyber.mil/stigs/srg-stig-tools/) and the RKE2 STIG that this Terraform plan references can be downloaded [HERE](https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_RGS_RKE2_V1R2_STIG.zip).
 
 To run the latest STIG viewer on Mac, use brew to first install Java stuff:
 
->```
+>```console
 >brew tap bell-sw/liberica
 >brew install --cask liberica-jdk16-full
 >```
 
-and then download/extract the generic viewer '.zip' file from the link above.
+and then download/extract the generic viewer `.zip` file from the link above.
 
 ## CIS Benchmark 1.6
 
@@ -25,7 +25,7 @@ For clarity, the STIG settings througout the cluster plan (`cluster.tf`) are com
 
 ## Filesystem Permissions
 
-Changing filesystem permissions expost facto is onerous and error-prone.  Luckily for us, deploying RKE2 via Rancher sets most STIG permissions correctly for us.
+Changing filesystem permissions expost facto is onerous and error-prone.  Luckily, deploying RKE2 via Rancher sets most STIG permissions correctly for us.
 There are a couple of directories & files that fall through the cracks and this plan automatically remediates them by leveraging RKE2's System Upgrade Controller (`stig_suc_plan.yaml`).  On all cluster nodes the plan executes a quick, simple bash script that's mounted from the `stig-filesystem-remediation` secret (`stig_suc_secret.tf`).  For the sake of being thorough, the secret is annotated with the appropriate STIG Rule ID & Name.
 
 ## K8s API Control Plane Arguments Reference
