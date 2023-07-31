@@ -12,8 +12,9 @@ resource "rancher2_machine_config_v2" "nodes" {
 
     cloud_config = templatefile("${path.cwd}/files/user_data_${each.key}.tftmpl",
       {
+        pss_config     = file("${path.cwd}/files/pss-admission-config.yaml"),
         ssh_user       = "rancher",
-        ssh_public_key = file("${path.cwd}/files/.ssh_public_key", )
+        ssh_public_key = file("${path.cwd}/files/.ssh-public-key")
     }) # End of templatefile values
 
     content_library = var.vsphere_env.library_name
@@ -23,7 +24,7 @@ resource "rancher2_machine_config_v2" "nodes" {
     datastore       = var.vsphere_env.datastore
     disk_size       = each.value.hdd_capacity
     memory_size     = each.value.vram
-    network         = [each.value.network]
+    network         = [var.vsphere_env.vm_network]
     vcenter         = var.vsphere_env.server
   }
 } # End of rancher2_machine_config_v2
@@ -35,7 +36,7 @@ resource "rancher2_cluster_v2" "rke2" {
   name               = random_pet.cluster_name.id
 
   rke_config {
-    additional_manifest = file("${path.cwd}/files/stig_suc_plan.yaml") # STIG Rule ID: SV-254564r859262_rule  (This is a manifest for a System Upgrade Plan that will remediate RKE2 file & directory permissions)
+    additional_manifest = file("${path.cwd}/files/stig-suc-plan.yaml") # STIG Rule ID: SV-254564r918258_rule (This is a manifest for a System Upgrade Plan that will remediate RKE2 file & directory permissions)
 
     chart_values = <<EOF
       rke2-canal:
@@ -50,6 +51,7 @@ resource "rancher2_cluster_v2" "rke2" {
         "experimental-initial-corrupt-check=true" ] # Can be removed with etcd v3.6, which will enable corruption check by default (see: https://github.com/etcd-io/etcd/issues/13766)
 
       kube-apiserver-arg: [ 
+        "admission-control-config-file=/etc/rancher/rke2/rancher-deployment-pss.yaml",
         "anonymous-auth=false",
         "audit-log-maxage=30",
         "audit-log-mode=blocking-strict",
@@ -71,7 +73,6 @@ resource "rancher2_cluster_v2" "rke2" {
 
       kubelet-arg: [
         "anonymous-auth=false",
-        "cgroup-driver=systemd",
         "authorization-mode=Webhook",
         "event-qps=0",
         "make-iptables-util-chains=true",
@@ -79,7 +80,7 @@ resource "rancher2_cluster_v2" "rke2" {
         "streaming-connection-idle-timeout=5m",
         "tls-min-version=VersionTLS13" ]
 
-      write-kubeconfig-mode: "640" # STIG Rule ID: SV-254564r859262_rule
+      write-kubeconfig-mode: "640" # STIG Rule ID: SV-254564r918258_rule
     EOF
 
     dynamic "machine_pools" {
@@ -101,8 +102,8 @@ resource "rancher2_cluster_v2" "rke2" {
 
     machine_selector_config {
       config = {
-        profile                 = "cis-1.6" # STIG Rule ID: SV-254555r870265_rule
-        protect-kernel-defaults = true      # STIG Rule ID: SV-254569r859277_rule (Required to install RKE2 with CIS Profile enabled)
+        profile                 = "cis-1.23" # STIG Rule ID: SV-254555r870265_rule
+        protect-kernel-defaults = true       # STIG Rule ID: SV-254569r879643_rule (Required to install RKE2 with CIS Profile enabled)
       }
     } # End machine_selector_config
   }   # End of rke_config
@@ -110,7 +111,7 @@ resource "rancher2_cluster_v2" "rke2" {
   lifecycle {
     precondition {
       condition     = var.node.ctl_plane.quantity % 2 != 0 && var.node.worker.quantity > 0
-      error_message = "Err: Invalid quantity for Node Pool. Check that Control Plane node quantity is odd number and Worker node quantity is > 0."
+      error_message = "ERR: Invalid quantity for Node Pool. Check that Control Plane node quantity is odd number and Worker node quantity is > 0."
     }
   } # End of lifecycle
 }   # End of rancher2_cluster_v2

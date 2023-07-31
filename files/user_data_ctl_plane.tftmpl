@@ -6,6 +6,10 @@ packages:
   - wireguard # For using wireguard as Calico/Canal backend (requires Kubernetes v1.23+ and Calico 3.14+)
 
 write_files:
+- path: /etc/rancher/rke2/rancher-deployment-pss.yaml
+  defer: true
+  permissions: "0600"
+  content: ${jsonencode(pss_config)}
 
 - content: |
     # Log all requests at the RequestResponse level

@@ -1,5 +1,5 @@
 resource "rancher2_secret_v2" "stig_os_filesystem_script" {
-  annotations = { "STIG_Rule_ID" = "SV-254564r859262_rule", "STIG_Rule_Name" = "SRG-APP-000133-CTR-000300" }
+  annotations = { "STIG_Rule_ID" = "SV-254564r918258_rule" }
   cluster_id  = rancher2_cluster_v2.rke2.cluster_v1_id
   name        = "stig-filesystem-remediation"
   namespace   = "cattle-system"

@@ -24,6 +24,6 @@ variable "vsphere_env" {
     datastore        = string
     library_name     = string
     server           = string
-    user             = string
+    vm_network       = string
   })
 }
