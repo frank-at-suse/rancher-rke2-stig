@@ -17,7 +17,7 @@ and then download/extract the generic viewer `.zip` file from the link above.
 
 ## CIS Benchmarks
 
-> :memo: CIS will soon be abondoning their current versioning schema (that aligns a CIS version with a Kubernetes minor release version) and returning to the "original" format.
+> :memo: CIS will soon be abandoning their current versioning schema (that aligns a CIS version with a Kubernetes minor release version) and returning to the "original" format.
 
 The STIG conformant cluster deployed by this Terraform plan includes additional configuration to make it CIS 1.6 (v1.24andBelow branch) or 1.23 (v1.25+ branch) conformant as well. The documentation for RKE2 CIS benchmark settings is [HERE](https://rancher.github.io/rke2-docs/security/cis_self_assessment123).
 
