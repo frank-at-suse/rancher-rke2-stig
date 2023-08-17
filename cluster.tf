@@ -42,6 +42,12 @@ resource "rancher2_cluster_v2" "rke2" {
       rke2-canal:
         flannel:
           backend: "wireguard"
+
+      rke2-ingress-nginx:
+        controller:
+          extraEnvs:
+            - name: OPENSSL_FIPS
+              value: "1"          
     EOF
 
     machine_global_config = <<EOF
